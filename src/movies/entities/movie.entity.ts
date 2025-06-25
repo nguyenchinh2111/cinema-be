@@ -17,7 +17,7 @@ export class Movie {
   @Column({ type: 'varchar', length: 100 })
   director: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'simple-array', nullable: true })
   genre: string[];
 
   @Column({ type: 'decimal', precision: 3, scale: 1 })
@@ -32,10 +32,10 @@ export class Movie {
   @Column({ type: 'text', nullable: true })
   trailerUrl: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'simple-array', nullable: true })
   cast: string[]; // Array of actor names
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'simple-array', nullable: true })
   reviews: string[]; // Array of review texts
 
   @Column({ type: 'timestamp', nullable: true })

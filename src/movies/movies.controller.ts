@@ -11,7 +11,7 @@ import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 
-@Controller('movies')
+@Controller('/api/movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
