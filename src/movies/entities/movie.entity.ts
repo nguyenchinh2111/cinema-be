@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Showtime } from '../../showtimes/entities/showtime.entity';
 
 @Entity('movies')
 export class Movie {
@@ -46,6 +47,9 @@ export class Movie {
 
   @Column({ type: 'timestamp', nullable: true })
   deleted_at: Date;
+
+  @OneToMany(() => Showtime, (showtime) => showtime.movie)
+  showtimes: Showtime[];
 
   constructor(
     title: string,
