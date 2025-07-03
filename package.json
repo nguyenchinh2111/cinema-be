@@ -17,7 +17,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:build": "docker build -t cinema-backend .",
+    "docker:run": "docker run -p 4000:4000 cinema-backend",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:prod": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "setup:dev": "chmod +x scripts/setup-dev.sh && ./scripts/setup-dev.sh",
+    "deploy": "chmod +x scripts/deploy.sh && ./scripts/deploy.sh"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
