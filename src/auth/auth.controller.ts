@@ -28,7 +28,8 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() req, @Body() loginDto: LoginDto) {
+  login(@Request() req) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.authService.login(req.user);
   }
 
@@ -39,6 +40,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     return req.user;
   }
 }

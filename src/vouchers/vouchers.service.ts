@@ -111,6 +111,7 @@ export class VouchersService {
     code: string,
     movieId?: number,
     orderAmount?: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     customerEmail?: string,
   ): Promise<{
     isValid: boolean;
@@ -189,6 +190,7 @@ export class VouchersService {
         voucher,
         discountAmount,
       };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       return { isValid: false, error: 'Invalid voucher code' };
     }

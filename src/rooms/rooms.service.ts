@@ -8,6 +8,7 @@ import { Repository, Like } from 'typeorm';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
+import { SeatsService } from '../seats/seats.service';
 
 interface CapacityStats {
   totalCapacity: string;
@@ -31,6 +32,7 @@ export class RoomsService {
   constructor(
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
+    private readonly seatsService: SeatsService,
   ) {}
 
   async create(createRoomDto: CreateRoomDto): Promise<Room> {
@@ -43,12 +45,21 @@ export class RoomsService {
       throw new ConflictException('Room with this name already exists');
     }
 
+    const { seats, ...roomData } = createRoomDto;
+
     const room = this.roomRepository.create({
-      ...createRoomDto,
+      ...roomData,
       isActive: createRoomDto.isActive ?? true,
     });
 
-    return await this.roomRepository.save(room);
+    const savedRoom = await this.roomRepository.save(room);
+
+    // Nếu có seats trong request, tạo ghế cho room
+    if (seats && seats.length > 0) {
+      await this.seatsService.createMultiple(savedRoom.id, seats);
+    }
+
+    return savedRoom;
   }
 
   async findAll(): Promise<Room[]> {
@@ -161,7 +172,7 @@ export class RoomsService {
   async findOne(id: number): Promise<Room> {
     const room = await this.roomRepository.findOne({
       where: { id },
-      relations: ['showtimes'],
+      relations: ['showtimes', 'seats'],
     });
 
     if (!room) {
@@ -169,6 +180,33 @@ export class RoomsService {
     }
 
     return room;
+  }
+
+  async findOneWithSeats(id: number): Promise<Room> {
+    const room = await this.roomRepository.findOne({
+      where: { id },
+      relations: ['seats'],
+    });
+
+    if (!room) {
+      throw new NotFoundException(`Room with ID ${id} not found`);
+    }
+
+    return room;
+  }
+
+  // Method để tạo room với ghế theo pattern chuẩn
+  async createRoomWithStandardSeats(
+    createRoomDto: Omit<CreateRoomDto, 'seats'>,
+    rows: string[] = ['A', 'B', 'C', 'D', 'E', 'F'],
+    seatsPerRow: number = 10,
+  ): Promise<Room> {
+    const room = await this.create(createRoomDto);
+
+    // Tạo ghế theo pattern chuẩn
+    await this.seatsService.generateSeatsForRoom(room.id, rows, seatsPerRow);
+
+    return this.findOneWithSeats(room.id);
   }
 
   async update(id: number, updateRoomDto: UpdateRoomDto): Promise<Room> {

@@ -125,7 +125,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     environment:
-      name: production
+      name: prod
       url: https://cinema-api.example.com
 
     steps:

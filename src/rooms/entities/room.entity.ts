@@ -25,4 +25,7 @@ export class Room {
 
   @OneToMany('Showtime', 'room')
   showtimes: any[];
+
+  @OneToMany('Seat', 'room')
+  seats: any[];
 }

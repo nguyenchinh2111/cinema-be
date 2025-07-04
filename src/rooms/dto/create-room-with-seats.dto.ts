@@ -7,13 +7,10 @@ import {
   IsBoolean,
   Min,
   IsArray,
-  ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CreateSeatDto } from '../../seats/dto/create-seat.dto';
 
-export class CreateRoomDto {
+export class CreateRoomWithSeatsDto {
   @ApiProperty({
     description: 'Name of the room',
     example: 'Room A1',
@@ -24,7 +21,7 @@ export class CreateRoomDto {
 
   @ApiProperty({
     description: 'Capacity of the room',
-    example: 150,
+    example: 60,
   })
   @IsNotEmpty()
   @IsNumber()
@@ -53,7 +50,7 @@ export class CreateRoomDto {
   })
   @IsOptional()
   @IsString()
-  roomType?: string; // e.g., "Standard", "IMAX", "VIP"
+  roomType?: string;
 
   @ApiPropertyOptional({
     description: 'Floor number of the room',
@@ -65,12 +62,20 @@ export class CreateRoomDto {
   floor?: number;
 
   @ApiPropertyOptional({
-    description: 'List of seats to create for this room',
-    type: [CreateSeatDto],
+    description: 'Row labels for seats',
+    example: ['A', 'B', 'C', 'D', 'E', 'F'],
   })
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateSeatDto)
-  seats?: CreateSeatDto[];
+  @IsString({ each: true })
+  rows?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Number of seats per row',
+    example: 10,
+  })
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  seatsPerRow?: number;
 }

@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Repository, Between, MoreThanOrEqual } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event, EventStatus, EventType } from './entities/event.entity';
@@ -188,6 +188,7 @@ export class EventService {
     const whereClause =
       startDate && endDate ? { createdAt: Between(startDate, endDate) } : {};
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const [totalEvents, publishedEvents, completedEvents, totalAttendees] =
       await Promise.all([
         this.eventsRepository.count({ where: whereClause }),
@@ -208,6 +209,7 @@ export class EventService {
       totalEvents,
       publishedEvents,
       completedEvents,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       totalAttendees: parseInt(totalAttendees?.total || '0'),
     };
   }

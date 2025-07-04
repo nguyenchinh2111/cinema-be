@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { CreateRoomWithSeatsDto } from './dto/create-room-with-seats.dto';
 
 @ApiTags('rooms')
 @ApiBearerAuth('JWT-auth')
@@ -157,5 +158,37 @@ export class RoomsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.roomsService.remove(id);
+  }
+
+  @ApiOperation({ summary: 'Create a room with standard seat layout' })
+  @ApiResponse({
+    status: 201,
+    description: 'Room with seats created successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiBody({ type: CreateRoomWithSeatsDto })
+  @Post('with-standard-seats')
+  @HttpCode(HttpStatus.CREATED)
+  createWithStandardSeats(@Body() roomData: CreateRoomWithSeatsDto) {
+    const {
+      rows = ['A', 'B', 'C', 'D', 'E', 'F'],
+      seatsPerRow = 10,
+      ...createRoomDto
+    } = roomData;
+    return this.roomsService.createRoomWithStandardSeats(
+      createRoomDto,
+      rows,
+      seatsPerRow,
+    );
+  }
+
+  @ApiOperation({ summary: 'Get a room with its seats' })
+  @ApiResponse({ status: 200, description: 'Room with seats found' })
+  @ApiResponse({ status: 404, description: 'Room not found' })
+  @ApiParam({ name: 'id', description: 'Room ID' })
+  @Get(':id/with-seats')
+  findOneWithSeats(@Param('id', ParseIntPipe) id: number) {
+    return this.roomsService.findOneWithSeats(id);
   }
 }

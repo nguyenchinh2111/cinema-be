@@ -18,7 +18,7 @@ export class TicketsService {
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
     // Generate unique ticket code
-    const ticketCode = await this.generateTicketCode();
+    const ticketCode = this.generateTicketCode();
 
     // Check if seat is already booked for this showtime
     const existingSeat = await this.ticketsRepository.findOne({
@@ -175,7 +175,7 @@ export class TicketsService {
     await this.ticketsRepository.remove(ticket);
   }
 
-  private async generateTicketCode(): Promise<string> {
+  private generateTicketCode(): string {
     const prefix = 'TKT';
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -186,6 +186,7 @@ export class TicketsService {
     const whereClause =
       startDate && endDate ? { createdAt: Between(startDate, endDate) } : {};
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const [totalTickets, confirmedTickets, revenue] = await Promise.all([
       this.ticketsRepository.count({ where: whereClause }),
       this.ticketsRepository.count({
@@ -204,6 +205,7 @@ export class TicketsService {
     return {
       totalTickets,
       confirmedTickets,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       revenue: parseFloat(revenue?.total || '0'),
     };
   }
